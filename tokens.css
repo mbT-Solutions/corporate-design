@@ -1,0 +1,278 @@
+/* ==========================================================================
+   Corporate Design — Material 3 tokens for Svelte / SvelteKit
+   GENERATED from tokens.json by generate.py — do not edit here.
+   Integration:  import in your root layout (+layout.svelte) or app.css
+   Theme switch: <html data-theme="light">  or  <html data-theme="dark">
+                 (light is the default; use the theme.ts store or an inline
+                 head script to set the attribute)
+   All Material 3 tokens follow the official --md-sys-color-* names, so
+   @material/web components pick them up automatically.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* ---- Brand anchors: the original RAL codes, do not modify ---- */
+  --cd-ral7016: #383E42;  /* anthracite grey */
+  --cd-ral9005: #0A0A0A;  /* jet black */
+  --cd-ral9016: #F1F0EA;  /* traffic white */
+  --cd-ral2004: #E75B12;  /* pure orange */
+  --cd-ral5005: #005387;  /* signal blue */
+
+  /* ---- grey ramp (hue consistently derived from ral 7016, h≈204°) ---- */
+  --cd-gray-50: #F7F7F8;
+  --cd-gray-100: #EFF0F1;
+  --cd-gray-200: #E1E3E5;
+  --cd-gray-300: #C9CDCF;
+  --cd-gray-400: #A2AAAF;
+  --cd-gray-500: #7D8991;
+  --cd-gray-600: #606A71;
+  --cd-gray-700: #495055;
+  --cd-gray-800: #383E42;      /* = ral 7016 */
+  --cd-gray-850: #2C3032;
+  --cd-gray-900: #212426;
+  --cd-gray-950: #131516;
+
+  /* ---- orange ramp (derived from ral 2004, h≈21°) ---- */
+  --cd-orange-50: #F9F2EE;
+  --cd-orange-100: #F6E9E2;
+  --cd-orange-200: #F1D7C9;
+  --cd-orange-300: #EBBEA5;
+  --cd-orange-400: #FF8A3D;    /* dark mode accent */
+  --cd-orange-500: #E75B12;    /* = ral 2004, brand orange */
+  --cd-orange-600: #B94F15;    /* hover & pressed on light backgrounds */
+  --cd-orange-700: #954216;    /* link text on light (6.8:1) */
+  --cd-orange-800: #723615;
+  --cd-orange-900: #4F2712;
+  --cd-orange-950: #391D0E;
+
+  /* ---- red ramp (h=0) — ramps are full scales; roles pick from them ---- */
+  --cd-red-50: #F9F0F0;
+  --cd-red-100: #F6E4E4;
+  --cd-red-200: #F59A9A;       /* dark mode error accent */
+  --cd-red-300: #E08585;
+  --cd-red-400: #DA6262;
+  --cd-red-500: #CC3E3E;
+  --cd-red-600: #A33030;       /* light mode error accent */
+  --cd-red-700: #862727;
+  --cd-red-800: #5C2323;
+  --cd-red-900: #3A1A1A;       /* dark mode error container */
+  --cd-red-950: #2E1414;
+
+  /* ---- blue ramp (derived from ral 5005, h≈203°) — info/status only, never an accent ---- */
+  --cd-blue-50: #F0F6F9;
+  --cd-blue-100: #E4EFF7;      /* light mode info container */
+  --cd-blue-200: #AAD4EE;      /* dark mode info accent, also on-info-container */
+  --cd-blue-300: #7AC0EB;
+  --cd-blue-400: #45ACED;
+  --cd-blue-500: #1299ED;
+  --cd-blue-600: #0D7EC5;
+  --cd-blue-700: #0766A2;
+  --cd-blue-800: #005387;      /* = ral 5005, brand blue, light mode info accent */
+  --cd-blue-900: #083754;      /* light on-info-container, dark info container */
+  --cd-blue-950: #092434;      /* dark mode on-info */
+
+  /* ---- Material 3 system tokens: LIGHT (default) ---- */
+
+  /* primary = the brand's black action color (buttons, switches, sliders) */
+  --md-sys-color-primary: #0A0A0A;
+  --md-sys-color-on-primary: #F1F0EA;   /* 17.3:1 */
+  --md-sys-color-primary-container: #383E42;
+  --md-sys-color-on-primary-container: #F1F0EA;   /* 9.5:1 */
+  --md-sys-color-primary-fixed: #383E42;
+  --md-sys-color-on-primary-fixed: #F1F0EA;   /* 9.5:1 */
+  --md-sys-color-primary-fixed-dim: #495055;
+  --md-sys-color-on-primary-fixed-variant: #F1F0EA;
+
+  /* secondary = muted grey for less prominent actions */
+  --md-sys-color-secondary: #495055;
+  --md-sys-color-on-secondary: #F1F0EA;   /* 7.2:1 */
+  --md-sys-color-secondary-container: #E1E3E5;
+  --md-sys-color-on-secondary-container: #212426;   /* 12.1:1 */
+  --md-sys-color-secondary-fixed: #E1E3E5;
+  --md-sys-color-on-secondary-fixed: #212426;   /* 12.1:1 */
+  --md-sys-color-secondary-fixed-dim: #C9CDCF;
+  --md-sys-color-on-secondary-fixed-variant: #212426;
+
+  /* tertiary = the orange cta / accent — use sparingly (see readme) */
+  --md-sys-color-tertiary: #E75B12;
+  --md-sys-color-on-tertiary: #0A0A0A;   /* 5.6:1 */
+  --md-sys-color-tertiary-container: #F6E9E2;
+  --md-sys-color-on-tertiary-container: #723615;   /* 7.8:1 */
+  --md-sys-color-tertiary-fixed: #E75B12;
+  --md-sys-color-on-tertiary-fixed: #0A0A0A;   /* 5.6:1 */
+  --md-sys-color-tertiary-fixed-dim: #B94F15;
+  --md-sys-color-on-tertiary-fixed-variant: #0A0A0A;
+
+  /* error — on the red ramp (red:600/100 light, red:200/900 dark) */
+  --md-sys-color-error: #A33030;
+  --md-sys-color-on-error: #F1F0EA;   /* 6.1:1 */
+  --md-sys-color-error-container: #F6E4E4;
+  --md-sys-color-on-error-container: #5C2323;   /* 10.0:1 */
+
+  /* background & surfaces */
+  --md-sys-color-background: #FFFFFF;
+  --md-sys-color-on-background: #0A0A0A;   /* 19.8:1 */
+  --md-sys-color-surface: #FFFFFF;
+  --md-sys-color-on-surface: #0A0A0A;   /* 19.8:1 */
+  --md-sys-color-surface-variant: #F1F0EA;
+  --md-sys-color-on-surface-variant: #606A71;   /* 4.8:1 */
+  --md-sys-color-surface-dim: #EFF0F1;
+  --md-sys-color-surface-bright: #FFFFFF;
+  --md-sys-color-surface-container-lowest: #FFFFFF;
+  --md-sys-color-surface-container-low: #F7F7F8;
+  --md-sys-color-surface-container: #F1F0EA;
+  --md-sys-color-surface-container-high: #EFF0F1;
+  --md-sys-color-surface-container-highest: #E1E3E5;
+
+  /* outlines */
+  --md-sys-color-outline: #7D8991;
+  --md-sys-color-outline-variant: #E1E3E5;
+
+  /* inverse (snackbars, tooltips) */
+  --md-sys-color-inverse-surface: #212426;
+  --md-sys-color-inverse-on-surface: #F1F0EA;
+  --md-sys-color-inverse-primary: #FF8A3D;
+
+  /* misc */
+  --md-sys-color-shadow: #0A0A0A;
+  --md-sys-color-scrim: #0A0A0A;
+
+  /* status colors — tinted container + dark text on light, solid accent + dark text on dark (readme rule 8); info uses the signal blue (ral 5005) */
+  --cd-success: #256E43;
+  --cd-on-success: #F1F0EA;        /* 5.4:1 */
+  --cd-success-container: #D9EDE0;
+  --cd-on-success-container: #1E5330;   /* 7.3:1 */
+  --cd-warning: #8A5A00;
+  --cd-on-warning: #F1F0EA;        /* 5.2:1 */
+  --cd-warning-container: #F7ECD0;
+  --cd-on-warning-container: #5C3F00;   /* 8.2:1 */
+  --cd-info: #005387;
+  --cd-on-info: #F1F0EA;           /* 7.1:1 */
+  --cd-info-container: #E4EFF7;
+  --cd-on-info-container: #083754;   /* 10.7:1 */
+
+  /* links — orange-700 on light (6.8:1), orange-400 on dark (7.8:1); hover darkens one step */
+  --cd-link: #954216;
+  --cd-link-hover: #723615;
+
+  /* ---- dejavu sans typescale, m3 roles and sizes; family swappable via one variable ---- */
+  --cd-font-family: 'DejaVu Sans', system-ui, sans-serif;
+  --cd-font-family-mono: 'DejaVu Sans Mono', ui-monospace, monospace;
+  --md-sys-typescale-display-large: 400 57px/64px -0.25px var(--cd-font-family);
+  --md-sys-typescale-display-medium: 400 45px/52px 0px var(--cd-font-family);
+  --md-sys-typescale-display-small: 400 36px/44px 0px var(--cd-font-family);
+  --md-sys-typescale-headline-large: 400 32px/40px 0px var(--cd-font-family);
+  --md-sys-typescale-headline-medium: 400 28px/36px 0px var(--cd-font-family);
+  --md-sys-typescale-headline-small: 400 24px/32px 0px var(--cd-font-family);
+  --md-sys-typescale-title-large: 400 22px/28px 0px var(--cd-font-family);
+  --md-sys-typescale-title-medium: 500 16px/24px 0.15px var(--cd-font-family);
+  --md-sys-typescale-title-small: 500 14px/20px 0.1px var(--cd-font-family);
+  --md-sys-typescale-body-large: 400 16px/24px 0.5px var(--cd-font-family);
+  --md-sys-typescale-body-medium: 400 14px/20px 0.25px var(--cd-font-family);
+  --md-sys-typescale-body-small: 400 12px/16px 0.4px var(--cd-font-family);
+  --md-sys-typescale-label-large: 500 14px/20px 0.1px var(--cd-font-family);
+  --md-sys-typescale-label-medium: 500 12px/16px 0.5px var(--cd-font-family);
+  --md-sys-typescale-label-small: 500 11px/16px 0.5px var(--cd-font-family);
+
+  /* ---- corner radii in dp/px, m3 scale; full = pill ---- */
+  --md-sys-shape-corner-none: 0px;
+  --md-sys-shape-corner-extra-small: 4px;
+  --md-sys-shape-corner-small: 8px;
+  --md-sys-shape-corner-medium: 12px;
+  --md-sys-shape-corner-large: 16px;
+  --md-sys-shape-corner-extra-large: 28px;
+  --md-sys-shape-corner-full: 9999px;
+
+  /* ---- shadow elevation levels in dp/px ---- */
+  --md-sys-elevation-0: 0px;
+  --md-sys-elevation-1: 1px;
+  --md-sys-elevation-2: 3px;
+  --md-sys-elevation-3: 6px;
+  --md-sys-elevation-4: 8px;
+  --md-sys-elevation-5: 12px;
+
+  /* ---- overlay opacity per state, m3 spec ---- */
+  --cd-state-hover: 0.08;
+  --cd-state-focus: 0.12;
+  --cd-state-pressed: 0.16;
+  --cd-state-dragged: 0.16;
+
+  /* ---- focus indicator: 2px outline token, offset 2px ---- */
+  --cd-focus-ring-width: 2px;
+  --cd-focus-ring-offset: 2px;
+  --cd-focus-ring-color: var(--md-sys-color-outline);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* primary = the brand's black action color (buttons, switches, sliders) */
+  --md-sys-color-primary: #F1F0EA;
+  --md-sys-color-on-primary: #0A0A0A;   /* 17.3:1 */
+  --md-sys-color-primary-container: #2C3032;
+
+  /* secondary = muted grey for less prominent actions */
+  --md-sys-color-secondary: #A2AAAF;
+  --md-sys-color-on-secondary: #131516;   /* 7.8:1 */
+  --md-sys-color-secondary-container: #495055;
+  --md-sys-color-on-secondary-container: #EFF0F1;   /* 7.2:1 */
+
+  /* tertiary = the orange cta / accent — use sparingly (see readme) */
+  --md-sys-color-tertiary: #FF8A3D;
+  --md-sys-color-tertiary-container: #4F2712;
+  --md-sys-color-on-tertiary-container: #EBBEA5;   /* 7.6:1 */
+
+  /* error — on the red ramp (red:600/100 light, red:200/900 dark) */
+  --md-sys-color-error: #F59A9A;
+  --md-sys-color-on-error: #3A1A1A;   /* 7.4:1 */
+  --md-sys-color-error-container: #3A1A1A;
+  --md-sys-color-on-error-container: #F59A9A;   /* 7.4:1 */
+
+  /* background & surfaces */
+  --md-sys-color-background: #131516;
+  --md-sys-color-on-background: #F1F0EA;   /* 16.0:1 */
+  --md-sys-color-surface: #131516;
+  --md-sys-color-on-surface: #F1F0EA;   /* 16.0:1 */
+  --md-sys-color-surface-variant: #212426;
+  --md-sys-color-on-surface-variant: #A2AAAF;   /* 6.6:1 */
+  --md-sys-color-surface-dim: #0A0A0A;
+  --md-sys-color-surface-bright: #212426;
+  --md-sys-color-surface-container-lowest: #0A0A0A;
+  --md-sys-color-surface-container-low: #131516;
+  --md-sys-color-surface-container: #212426;
+  --md-sys-color-surface-container-high: #2C3032;
+  --md-sys-color-surface-container-highest: #383E42;
+
+  /* outlines */
+  --md-sys-color-outline-variant: #3A3F42;
+
+  /* inverse (snackbars, tooltips) */
+  --md-sys-color-inverse-surface: #F1F0EA;
+  --md-sys-color-inverse-on-surface: #212426;
+  --md-sys-color-inverse-primary: #E75B12;
+
+  /* status colors — tinted container + dark text on light, solid accent + dark text on dark (readme rule 8); info uses the signal blue (ral 5005) */
+  --cd-success: #8FD5A8;
+  --cd-on-success: #0F2A19;        /* 9.0:1 */
+  --cd-success-container: #1D4630;
+  --cd-on-success-container: #C4EBD2;   /* 8.2:1 */
+  --cd-warning: #FFD48A;
+  --cd-on-warning: #2E2000;        /* 11.4:1 */
+  --cd-warning-container: #46380F;
+  --cd-on-warning-container: #FFE1A0;   /* 9.0:1 */
+  --cd-info: #AAD4EE;
+  --cd-on-info: #092434;           /* 10.2:1 */
+  --cd-info-container: #083754;
+  --cd-on-info-container: #AAD4EE;   /* 7.9:1 */
+
+  /* links — orange-700 on light (6.8:1), orange-400 on dark (7.8:1); hover darkens one step */
+  --cd-link: #FF8A3D;
+  --cd-link-hover: #EBBEA5;
+
+  /* *-fixed* roles are not redefined: the css cascade keeps the light
+     values, which is exactly the m3 fixed-role semantics (compose has
+     no cascade, so CdColor.kt repeats them explicitly) */
+
+  /* typography, shapes, elevation, state layers are theme-independent */
+}
