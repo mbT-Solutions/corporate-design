@@ -3,8 +3,8 @@
    GENERATED from tokens.json by generate.py — do not edit here.
    Integration:  import in your root layout (+layout.svelte) or app.css
    Theme switch: <html data-theme="light">  or  <html data-theme="dark">
-                 (light is the default; use the theme.ts store or an inline
-                 head script to set the attribute)
+                 (light is the :root fallback; initTheme()/the head script
+                 pick stored-or-system on first visit)
    All Material 3 tokens follow the official --md-sys-color-* names, so
    @material/web components pick them up automatically.
    ========================================================================== */
@@ -40,7 +40,7 @@
   --cd-orange-300: #EBBEA5;
   --cd-orange-400: #FF8A3D;    /* dark mode accent */
   --cd-orange-500: #E75B12;    /* = ral 2004, brand orange */
-  --cd-orange-600: #B94F15;    /* hover & pressed on light backgrounds */
+  --cd-orange-600: #B94F15;    /* unused by roles — hover is a state layer */
   --cd-orange-700: #954216;    /* link text on light (6.8:1) */
   --cd-orange-800: #723615;
   --cd-orange-900: #4F2712;
@@ -72,7 +72,7 @@
   --cd-blue-900: #083754;      /* light on-info-container, dark info container */
   --cd-blue-950: #092434;      /* dark mode on-info */
 
-  /* ---- Material 3 system tokens: LIGHT (default) ---- */
+  /* ---- Material 3 system tokens: LIGHT (:root fallback) ---- */
 
   /* primary = the brand's black action color (buttons, switches, sliders) */
   --md-sys-color-primary: #0A0A0A;
@@ -82,7 +82,7 @@
   --md-sys-color-primary-fixed: #383E42;
   --md-sys-color-on-primary-fixed: #F1F0EA;   /* 9.5:1 */
   --md-sys-color-primary-fixed-dim: #495055;
-  --md-sys-color-on-primary-fixed-variant: #F1F0EA;
+  --md-sys-color-on-primary-fixed-variant: #F1F0EA;   /* 7.2:1 */
 
   /* secondary = muted grey for less prominent actions */
   --md-sys-color-secondary: #495055;
@@ -92,17 +92,17 @@
   --md-sys-color-secondary-fixed: #E1E3E5;
   --md-sys-color-on-secondary-fixed: #212426;   /* 12.1:1 */
   --md-sys-color-secondary-fixed-dim: #C9CDCF;
-  --md-sys-color-on-secondary-fixed-variant: #212426;
+  --md-sys-color-on-secondary-fixed-variant: #212426;   /* 9.8:1 */
 
   /* tertiary = the orange cta / accent — use sparingly (see readme) */
   --md-sys-color-tertiary: #E75B12;
   --md-sys-color-on-tertiary: #0A0A0A;   /* 5.6:1 */
   --md-sys-color-tertiary-container: #F6E9E2;
   --md-sys-color-on-tertiary-container: #723615;   /* 7.8:1 */
-  --md-sys-color-tertiary-fixed: #E75B12;
-  --md-sys-color-on-tertiary-fixed: #0A0A0A;   /* 5.6:1 */
-  --md-sys-color-tertiary-fixed-dim: #B94F15;
-  --md-sys-color-on-tertiary-fixed-variant: #0A0A0A;
+  --md-sys-color-tertiary-fixed: #FF8A3D;
+  --md-sys-color-on-tertiary-fixed: #0A0A0A;   /* 8.4:1 */
+  --md-sys-color-tertiary-fixed-dim: #E75B12;
+  --md-sys-color-on-tertiary-fixed-variant: #0A0A0A;   /* 5.6:1 */
 
   /* error — on the red ramp (red:600/100 light, red:200/900 dark) */
   --md-sys-color-error: #A33030;
@@ -134,11 +134,11 @@
   --md-sys-color-inverse-on-surface: #F1F0EA;
   --md-sys-color-inverse-primary: #FF8A3D;
 
-  /* misc */
+  /* misc — surface-tint is deliberately css-off: no tint overlays; compose keeps the library default value for compatibility */
   --md-sys-color-shadow: #0A0A0A;
   --md-sys-color-scrim: #0A0A0A;
 
-  /* status colors — tinted container + dark text on light, solid accent + dark text on dark (readme rule 8); info uses the signal blue (ral 5005) */
+  /* status colors — tinted container + dark text on light, solid accent + dark text on dark (readme rule 8); info uses the signal blue (ral 5005); success/warning are hand-tuned green/amber outside the grey/orange/red/blue ramps */
   --cd-success: #256E43;
   --cd-on-success: #F1F0EA;        /* 5.4:1 */
   --cd-success-container: #D9EDE0;
@@ -152,7 +152,7 @@
   --cd-info-container: #E4EFF7;
   --cd-on-info-container: #083754;   /* 10.7:1 */
 
-  /* links — orange-700 on light (6.8:1), orange-400 on dark (7.8:1); hover darkens one step */
+  /* links — orange-700 on light (6.8:1), orange-400 on dark (7.8:1); hover shifts one ramp step (darker on light, lighter on dark), never ral 2004 */
   --cd-link: #954216;
   --cd-link-hover: #723615;
 
@@ -175,7 +175,7 @@
   --md-sys-typescale-label-medium: 500 12px/16px 0.5px var(--cd-font-family);
   --md-sys-typescale-label-small: 500 11px/16px 0.5px var(--cd-font-family);
 
-  /* ---- corner radii in dp/px, m3 scale; full = pill ---- */
+  /* ---- corner radii in dp/px, m3 scale; full = pill: css 9999px, compose RoundedCornerShape(percent = 50) ---- */
   --md-sys-shape-corner-none: 0px;
   --md-sys-shape-corner-extra-small: 4px;
   --md-sys-shape-corner-small: 8px;
@@ -252,7 +252,7 @@
   --md-sys-color-inverse-on-surface: #212426;
   --md-sys-color-inverse-primary: #E75B12;
 
-  /* status colors — tinted container + dark text on light, solid accent + dark text on dark (readme rule 8); info uses the signal blue (ral 5005) */
+  /* status colors — tinted container + dark text on light, solid accent + dark text on dark (readme rule 8); info uses the signal blue (ral 5005); success/warning are hand-tuned green/amber outside the grey/orange/red/blue ramps */
   --cd-success: #8FD5A8;
   --cd-on-success: #0F2A19;        /* 9.0:1 */
   --cd-success-container: #1D4630;
@@ -266,7 +266,7 @@
   --cd-info-container: #083754;
   --cd-on-info-container: #AAD4EE;   /* 7.9:1 */
 
-  /* links — orange-700 on light (6.8:1), orange-400 on dark (7.8:1); hover darkens one step */
+  /* links — orange-700 on light (6.8:1), orange-400 on dark (7.8:1); hover shifts one ramp step (darker on light, lighter on dark), never ral 2004 */
   --cd-link: #FF8A3D;
   --cd-link-hover: #EBBEA5;
 

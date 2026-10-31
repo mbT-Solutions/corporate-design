@@ -55,8 +55,16 @@ def check(name, fg, bg, minimum, mode, label=None):
     return ratio
 
 
+def pair_base(name):
+    """container a token sits on; on-x-fixed-variant pairs with x-fixed-dim."""
+    base = name[3:] if name.startswith("on-") else None
+    if base and base.endswith("-fixed-variant"):
+        return base[: -len("-variant")] + "-dim"
+    return base
+
+
 def verify(data):
-    """all on-* pairs >= 4.5:1, outline >= 3:1 against the mode background."""
+    """on-* pairs and links >= 4.5:1, outline >= 3:1 against the mode background."""
     for group in data["roles"] + data["semantic"]:
         for mode in ("light", "dark"):
             toks = {}
@@ -66,7 +74,7 @@ def verify(data):
             for name, fg in toks.items():
                 if fg is None:
                     continue
-                base = name[3:] if name.startswith("on-") else None
+                base = pair_base(name)
                 if base and toks.get(base):
                     check(name, fg, toks[base], 4.5, mode)
     bg_group = next(g["tokens"] for g in data["roles"] if "background" in g["tokens"])
@@ -77,6 +85,12 @@ def verify(data):
                 if name == "outline" and spec.get(mode):
                     check("outline", resolve(spec[mode], data), bg, 3.0, mode,
                           "non-text")
+        for group in data["semantic"]:
+            for name in ("link", "link-hover"):
+                spec = group["tokens"].get(name)
+                if spec and spec.get(mode):
+                    check(name, resolve(spec[mode], data), bg, 4.5, mode,
+                          "link text")
 
 
 # ---------- naming ----------
@@ -114,8 +128,8 @@ def emit_css(data):
         "   GENERATED from tokens.json by generate.py — do not edit here.",
         "   Integration:  import in your root layout (+layout.svelte) or app.css",
         "   Theme switch: <html data-theme=\"light\">  or  <html data-theme=\"dark\">",
-        "                 (light is the default; use the theme.ts store or an inline",
-        "                 head script to set the attribute)",
+        "                 (light is the :root fallback; initTheme()/the head script",
+        "                 pick stored-or-system on first visit)",
         "   All Material 3 tokens follow the official --md-sys-color-* names, so",
         "   @material/web components pick them up automatically.",
         "   ========================================================================== */",
@@ -138,7 +152,7 @@ def emit_css(data):
             lines.append(f"  --cd-{ramp}-{step}: {hexv};{pad}{note}".rstrip())
         lines.append("")
 
-    lines.append("  /* ---- Material 3 system tokens: LIGHT (default) ---- */")
+    lines.append("  /* ---- Material 3 system tokens: LIGHT (:root fallback) ---- */")
     for group in data["roles"]:
         lines.append("")
         lines.append(f"  /* {group['comment']} */")
@@ -147,7 +161,7 @@ def emit_css(data):
                 continue
             light = resolve(spec["light"], data)
             bg = None
-            base = name[3:] if name.startswith("on-") else None
+            base = pair_base(name)
             if base and base in group["tokens"]:
                 bg = resolve(group["tokens"][base]["light"], data)
                 note = f"  /* {contrast(light, bg):.1f}:1 */"
@@ -162,7 +176,7 @@ def emit_css(data):
         for name, spec in group["tokens"].items():
             light = resolve(spec["light"], data)
             bg = None
-            base = name[3:] if name.startswith("on-") else None
+            base = pair_base(name)
             if base and base in group["tokens"]:
                 bg = resolve(group["tokens"][base]["light"], data)
                 note = f"  /* {contrast(light, bg):.1f}:1 */"
@@ -227,7 +241,7 @@ def emit_css(data):
             if dark_hex == light_hex and group not in data["semantic"]:
                 continue  # same in both modes: cascade provides it
             bg = None
-            base = name[3:] if name.startswith("on-") else None
+            base = pair_base(name)
             if base and base in group["tokens"]:
                 bgspec = group["tokens"][base]
                 bg_ref = bgspec.get("dark") or bgspec["light"]
@@ -265,7 +279,7 @@ def kt_role_lines(group, mode, data, all_groups):
             # fixed role: repeat light value, no cascade in compose
             pass
         val = kt_const(ref)
-        base = name[3:] if name.startswith("on-") else None
+        base = pair_base(name)
         note = ""
         if base and base in group["tokens"]:
             bgspec = group["tokens"][base]
@@ -362,7 +376,7 @@ def emit_kt_shape(data):
         "",
         "// generated from tokens.json by generate.py",
         "// corner-none and corner-full (pill) are not Shapes slots:",
-        "// use RoundedCornerShape(0) / RoundedCornerShape(50) directly",
+        "// use RoundedCornerShape(0) / RoundedCornerShape(percent = 50) directly",
         "val CdShapes = Shapes(",
     ]
     for name, v in sh.items():
@@ -378,8 +392,8 @@ def emit_kt_status(data):
     lines = [
         "package de.madebytimo.corporatedesign",
         "",
-        "import androidx.compose.foundation.isSystemInDarkTheme",
         "import androidx.compose.runtime.Composable",
+        "import androidx.compose.runtime.staticCompositionLocalOf",
         "import androidx.compose.ui.graphics.Color",
         "",
         "// generated from tokens.json by generate.py",
@@ -387,7 +401,8 @@ def emit_kt_status(data):
     ]
     group = data["semantic"][0]
     lgroup = data["semantic"][1]
-    for name, spec in {**group["tokens"], **lgroup["tokens"]}.items():
+    names = {**group["tokens"], **lgroup["tokens"]}
+    for name, spec in names.items():
         lh = resolve(spec["light"], data).lstrip("#")
         dh = resolve(spec["dark"], data).lstrip("#")
         lines.append(
@@ -400,29 +415,31 @@ def emit_kt_status(data):
         "",
         "data class CdSemanticColors(",
     ]
-    for name in {**group["tokens"], **lgroup["tokens"]}:
+    for name in names:
         lines.append(f"    val {camel(name)}: Color,")
+    lines += [")", ""]
+    for suffix in ("Light", "Dark"):
+        lines.append(f"val CdSemanticColors{suffix} = CdSemanticColors(")
+        for name in names:
+            lines.append(f"    {camel(name)} = {camel(name)}{suffix},")
+        lines += [")", ""]
     lines += [
-        ")",
+        "val LocalCdSemanticColors = staticCompositionLocalOf { CdSemanticColorsLight }",
         "",
         "@Composable",
-        "fun cdSemanticColors(darkTheme: Boolean = isSystemInDarkTheme()): CdSemanticColors {",
-        "    return if (darkTheme) CdSemanticColors(",
+        "fun cdSemanticColors(darkTheme: Boolean? = null): CdSemanticColors =",
+        "    when (darkTheme) {",
+        "        true -> CdSemanticColorsDark",
+        "        false -> CdSemanticColorsLight",
+        "        null -> LocalCdSemanticColors.current",
+        "    }",
+        "",
     ]
-    for name in {**group["tokens"], **lgroup["tokens"]}:
-        lines.append(f"        {camel(name)} = {camel(name)}Dark,")
-    lines += [
-        "    ) else CdSemanticColors(",
-    ]
-    for name in {**group["tokens"], **lgroup["tokens"]}:
-        lines.append(f"        {camel(name)} = {camel(name)}Light,")
-    lines += ["    )", "}", ""]
     return "\n".join(lines) + "\n"
 
 
 def readme_table(data):
     usage = data["role_usage"]
-    rows = []
     flat = {}
     for group in data["roles"] + data["semantic"]:
         for name, spec in group["tokens"].items():
@@ -430,41 +447,67 @@ def readme_table(data):
                 resolve(spec["light"], data),
                 resolve(spec["dark"], data) if spec.get("dark") else None,
             )
+
     def light_cell(name):
         return f"`{flat[name][0]}`"
+
     def dark_cell(name):
         dark = flat[name][1]
-        return f"`{dark}`" if dark and dark != flat[name][0] else "—"
+        if dark is None:
+            return "—"
+        return f"`{dark}`" if dark != flat[name][0] else "(same)"
+
     def pair(primary, on):
         return light_cell(primary) + " / " + light_cell(on)
+
     def pair_dark(primary, on):
         p, o = dark_cell(primary), dark_cell(on)
         if p == "—" and o == "—":
             return "—"
-        p = "(same)" if p == "—" else p
-        o = "(same)" if o == "—" else o
         return p + " / " + o
-    r = rows.append
-    r(("`primary` / `on-primary`", pair("primary", "on-primary"), pair_dark("primary", "on-primary"), usage.get("primary / on-primary", "")))
-    r(("`primary-container` / `on-`", pair("primary-container", "on-primary-container"), pair_dark("primary-container", "on-primary-container"), usage["primary-container / on-"]))
-    r(("`tertiary` / `on-tertiary`", pair("tertiary", "on-tertiary"), pair_dark("tertiary", "on-tertiary"), usage["tertiary / on-tertiary"]))
-    r(("`tertiary-container` / `on-`", pair("tertiary-container", "on-tertiary-container"), pair_dark("tertiary-container", "on-tertiary-container"), usage["tertiary-container / on-"]))
-    r(("`success` / `on-success`", pair("success", "on-success"), pair_dark("success", "on-success"), usage["success / on-success"]))
-    r(("`warning` / `on-warning`", pair("warning", "on-warning"), pair_dark("warning", "on-warning"), usage["warning / on-warning"]))
-    r(("`info` / `on-info`", pair("info", "on-info"), pair_dark("info", "on-info"), usage["info / on-info"]))
-    r(("`link` / `link-hover`", light_cell("link") + " / " + light_cell("link-hover"), dark_cell("link") + " / " + dark_cell("link-hover"), usage["link"]))
-    r(("`surface` / `on-surface`", pair("surface", "on-surface"), pair_dark("surface", "on-surface"), usage["surface / on-surface"]))
-    r(("`surface-container-highest`", light_cell("surface-container-highest"), dark_cell("surface-container-highest"), usage["surface-container-highest"]))
-    r(("`surface-variant` / `on-`", pair("surface-variant", "on-surface-variant"), pair_dark("surface-variant", "on-surface-variant"), usage["surface-variant / on-"]))
-    r(("`outline` / `outline-variant`", light_cell("outline") + " / " + light_cell("outline-variant"), dark_cell("outline") + " / " + dark_cell("outline-variant"), usage["outline / outline-variant"]))
-    r(("`error` / `on-error`", pair("error", "on-error"), pair_dark("error", "on-error"), usage["error / on-error"]))
-    r(("`inverse-*`", "snackbars, tooltips (defined)", "", ""))
-    widths = [max(len(r[i]) for r in rows) + 2 for i in range(4)]
-    out = ["| " + "Role".ljust(widths[0] - 2) + " | " + "Light".ljust(widths[1] - 2) + " | " + "Dark".ljust(widths[2] - 2) + " | " + "Usage".ljust(widths[3] - 2) + " |",
-           "|" + "-" * widths[0] + "|" + "-" * widths[1] + "|" + "-" * widths[2] + "|" + "-" * widths[3] + "|"]
-    for row in rows:
-        out.append("| " + " | ".join(c.ljust(widths[i] - 2) for i, c in enumerate(row)) + " |")
-    return "\n".join(out)
+
+    def render_table(rows):
+        widths = [max(len(r[i]) for r in rows) + 2 for i in range(4)]
+        out = [
+            "| " + "Role".ljust(widths[0] - 2) + " | "
+            + "Light".ljust(widths[1] - 2) + " | "
+            + "Dark".ljust(widths[2] - 2) + " | "
+            + "Usage".ljust(widths[3] - 2) + " |",
+            "|" + "-" * widths[0] + "|" + "-" * widths[1]
+            + "|" + "-" * widths[2] + "|" + "-" * widths[3] + "|",
+        ]
+        for row in rows:
+            out.append(
+                "| " + " | ".join(c.ljust(widths[i] - 2) for i, c in enumerate(row)) + " |"
+            )
+        return "\n".join(out)
+
+    r = []
+    r.append(("`primary` / `on-primary`", pair("primary", "on-primary"), pair_dark("primary", "on-primary"), usage.get("primary / on-primary", "")))
+    r.append(("`primary-container` / `on-`", pair("primary-container", "on-primary-container"), pair_dark("primary-container", "on-primary-container"), usage.get("primary-container / on-", "")))
+    r.append(("`tertiary` / `on-tertiary`", pair("tertiary", "on-tertiary"), pair_dark("tertiary", "on-tertiary"), usage.get("tertiary / on-tertiary", "")))
+    r.append(("`tertiary-container` / `on-`", pair("tertiary-container", "on-tertiary-container"), pair_dark("tertiary-container", "on-tertiary-container"), usage.get("tertiary-container / on-", "")))
+    r.append(("`surface` / `on-surface`", pair("surface", "on-surface"), pair_dark("surface", "on-surface"), usage.get("surface / on-surface", "")))
+    r.append(("`surface-container-highest`", light_cell("surface-container-highest"), dark_cell("surface-container-highest"), usage.get("surface-container-highest", "")))
+    r.append(("`surface-variant` / `on-`", pair("surface-variant", "on-surface-variant"), pair_dark("surface-variant", "on-surface-variant"), usage.get("surface-variant / on-", "")))
+    r.append(("`outline` / `outline-variant`", light_cell("outline") + " / " + light_cell("outline-variant"), dark_cell("outline") + " / " + dark_cell("outline-variant"), usage.get("outline / outline-variant", "")))
+    r.append(("`error` / `on-error`", pair("error", "on-error"), pair_dark("error", "on-error"), usage.get("error / on-error", "")))
+    r.append(("`inverse-surface` / `inverse-on-surface`", pair("inverse-surface", "inverse-on-surface"), pair_dark("inverse-surface", "inverse-on-surface"), usage.get("inverse-surface / inverse-on-surface", "")))
+    r.append(("`inverse-primary`", light_cell("inverse-primary"), dark_cell("inverse-primary"), usage.get("inverse-primary", "")))
+
+    s = []
+    s.append(("`success` / `on-success`", pair("success", "on-success"), pair_dark("success", "on-success"), usage.get("success / on-success", "")))
+    s.append(("`warning` / `on-warning`", pair("warning", "on-warning"), pair_dark("warning", "on-warning"), usage.get("warning / on-warning", "")))
+    s.append(("`info` / `on-info`", pair("info", "on-info"), pair_dark("info", "on-info"), usage.get("info / on-info", "")))
+    s.append(("`link` / `link-hover`", light_cell("link") + " / " + light_cell("link-hover"), dark_cell("link") + " / " + dark_cell("link-hover"), usage.get("link", "")))
+
+    return "\n\n".join([
+        "**Material roles** (`--md-sys-color-*`):",
+        render_table(r),
+        "**Semantic extensions** (`--cd-*`):",
+        render_table(s),
+        "`(same)` = identical to the light value; `—` = not defined for that mode.",
+    ])
 
 
 README_MARKERS = ("<!-- key-tokens:start (generated by generate.py) -->",

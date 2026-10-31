@@ -3,6 +3,7 @@ package de.madebytimo.corporatedesign
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,12 +20,16 @@ fun CdTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    MaterialTheme(
-        colorScheme = if (darkTheme) CdDarkColors else CdLightColors,
-        typography = CdTypography,
-        shapes = CdShapes,
-        content = content,
-    )
+    CompositionLocalProvider(
+        LocalCdSemanticColors provides if (darkTheme) CdSemanticColorsDark else CdSemanticColorsLight,
+    ) {
+        MaterialTheme(
+            colorScheme = if (darkTheme) CdDarkColors else CdLightColors,
+            typography = CdTypography,
+            shapes = CdShapes,
+            content = content,
+        )
+    }
 }
 
 // observable theme choice + toggle, theme.ts-style

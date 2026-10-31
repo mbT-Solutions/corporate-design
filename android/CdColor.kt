@@ -34,7 +34,7 @@ val CdOrange200 = Color(0xFFF1D7C9)
 val CdOrange300 = Color(0xFFEBBEA5)
 val CdOrange400 = Color(0xFFFF8A3D) // dark mode accent
 val CdOrange500 = CdRal2004 // = ral 2004, brand orange
-val CdOrange600 = Color(0xFFB94F15) // hover & pressed on light backgrounds
+val CdOrange600 = Color(0xFFB94F15) // unused by roles — hover is a state layer
 val CdOrange700 = Color(0xFF954216) // link text on light (6.8:1)
 val CdOrange800 = Color(0xFF723615)
 val CdOrange900 = Color(0xFF4F2712)
@@ -76,7 +76,7 @@ val CdLightColors = lightColorScheme(
     primaryFixed = CdRal7016,
     onPrimaryFixed = CdRal9016, // 9.5:1
     primaryFixedDim = CdGray700,
-    onPrimaryFixedVariant = CdRal9016,
+    onPrimaryFixedVariant = CdRal9016, // 7.2:1
     // secondary = muted grey for less prominent actions
     secondary = CdGray700,
     onSecondary = CdRal9016, // 7.2:1
@@ -85,16 +85,16 @@ val CdLightColors = lightColorScheme(
     secondaryFixed = CdGray200,
     onSecondaryFixed = CdGray900, // 12.1:1
     secondaryFixedDim = CdGray300,
-    onSecondaryFixedVariant = CdGray900,
+    onSecondaryFixedVariant = CdGray900, // 9.8:1
     // tertiary = the orange cta / accent — use sparingly (see readme)
     tertiary = CdRal2004,
     onTertiary = CdRal9005, // 5.6:1
     tertiaryContainer = CdOrange100,
     onTertiaryContainer = CdOrange800, // 7.8:1
-    tertiaryFixed = CdRal2004,
-    onTertiaryFixed = CdRal9005, // 5.6:1
-    tertiaryFixedDim = CdOrange600,
-    onTertiaryFixedVariant = CdRal9005,
+    tertiaryFixed = CdOrange400,
+    onTertiaryFixed = CdRal9005, // 8.4:1
+    tertiaryFixedDim = CdRal2004,
+    onTertiaryFixedVariant = CdRal9005, // 5.6:1
     // error — on the red ramp (red:600/100 light, red:200/900 dark)
     error = CdRed600,
     onError = CdRal9016, // 6.1:1
@@ -121,7 +121,7 @@ val CdLightColors = lightColorScheme(
     inverseSurface = CdGray900,
     inverseOnSurface = CdRal9016,
     inversePrimary = CdOrange400,
-    // misc
+    // misc — surface-tint is deliberately css-off: no tint overlays; compose keeps the library default value for compatibility
     scrim = CdRal9005,
     surfaceTint = CdRal9005,
 )
@@ -137,7 +137,7 @@ val CdDarkColors = darkColorScheme(
     primaryFixed = CdRal7016,
     onPrimaryFixed = CdRal9016, // 9.5:1
     primaryFixedDim = CdGray700,
-    onPrimaryFixedVariant = CdRal9016,
+    onPrimaryFixedVariant = CdRal9016, // 7.2:1
     // secondary = muted grey for less prominent actions
     secondary = CdGray400,
     onSecondary = CdGray950, // 7.8:1
@@ -146,16 +146,16 @@ val CdDarkColors = darkColorScheme(
     secondaryFixed = CdGray200,
     onSecondaryFixed = CdGray900, // 12.1:1
     secondaryFixedDim = CdGray300,
-    onSecondaryFixedVariant = CdGray900,
+    onSecondaryFixedVariant = CdGray900, // 9.8:1
     // tertiary = the orange cta / accent — use sparingly (see readme)
     tertiary = CdOrange400,
     onTertiary = CdRal9005, // 8.4:1
     tertiaryContainer = CdOrange900,
     onTertiaryContainer = CdOrange300, // 7.6:1
-    tertiaryFixed = CdRal2004,
-    onTertiaryFixed = CdRal9005, // 5.6:1
-    tertiaryFixedDim = CdOrange600,
-    onTertiaryFixedVariant = CdRal9005,
+    tertiaryFixed = CdOrange400,
+    onTertiaryFixed = CdRal9005, // 8.4:1
+    tertiaryFixedDim = CdRal2004,
+    onTertiaryFixedVariant = CdRal9005, // 5.6:1
     // error — on the red ramp (red:600/100 light, red:200/900 dark)
     error = CdRed200,
     onError = CdRed900, // 7.4:1
@@ -182,7 +182,7 @@ val CdDarkColors = darkColorScheme(
     inverseSurface = CdRal9016,
     inverseOnSurface = CdGray900,
     inversePrimary = CdRal2004,
-    // misc
+    // misc — surface-tint is deliberately css-off: no tint overlays; compose keeps the library default value for compatibility
     scrim = CdRal9005,
     surfaceTint = CdRal9016,
 )

@@ -14,8 +14,13 @@ export const theme = writable<Theme>('light');
 let started = false;
 
 function storedTheme(): Theme | null {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  return stored === 'light' || stored === 'dark' ? stored : null;
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored === 'light' || stored === 'dark' ? stored : null;
+  } catch {
+    // storage disabled/blocked (private mode, cookie partition) — fall back to the system pref
+    return null;
+  }
 }
 
 /** Reads the stored or system preference, applies it, and wires persistence. */

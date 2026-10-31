@@ -1,7 +1,7 @@
 package de.madebytimo.corporatedesign
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 // generated from tokens.json by generate.py
@@ -52,38 +52,47 @@ data class CdSemanticColors(
     val linkHover: Color,
 )
 
+val CdSemanticColorsLight = CdSemanticColors(
+    success = successLight,
+    onSuccess = onSuccessLight,
+    successContainer = successContainerLight,
+    onSuccessContainer = onSuccessContainerLight,
+    warning = warningLight,
+    onWarning = onWarningLight,
+    warningContainer = warningContainerLight,
+    onWarningContainer = onWarningContainerLight,
+    info = infoLight,
+    onInfo = onInfoLight,
+    infoContainer = infoContainerLight,
+    onInfoContainer = onInfoContainerLight,
+    link = linkLight,
+    linkHover = linkHoverLight,
+)
+
+val CdSemanticColorsDark = CdSemanticColors(
+    success = successDark,
+    onSuccess = onSuccessDark,
+    successContainer = successContainerDark,
+    onSuccessContainer = onSuccessContainerDark,
+    warning = warningDark,
+    onWarning = onWarningDark,
+    warningContainer = warningContainerDark,
+    onWarningContainer = onWarningContainerDark,
+    info = infoDark,
+    onInfo = onInfoDark,
+    infoContainer = infoContainerDark,
+    onInfoContainer = onInfoContainerDark,
+    link = linkDark,
+    linkHover = linkHoverDark,
+)
+
+val LocalCdSemanticColors = staticCompositionLocalOf { CdSemanticColorsLight }
+
 @Composable
-fun cdSemanticColors(darkTheme: Boolean = isSystemInDarkTheme()): CdSemanticColors {
-    return if (darkTheme) CdSemanticColors(
-        success = successDark,
-        onSuccess = onSuccessDark,
-        successContainer = successContainerDark,
-        onSuccessContainer = onSuccessContainerDark,
-        warning = warningDark,
-        onWarning = onWarningDark,
-        warningContainer = warningContainerDark,
-        onWarningContainer = onWarningContainerDark,
-        info = infoDark,
-        onInfo = onInfoDark,
-        infoContainer = infoContainerDark,
-        onInfoContainer = onInfoContainerDark,
-        link = linkDark,
-        linkHover = linkHoverDark,
-    ) else CdSemanticColors(
-        success = successLight,
-        onSuccess = onSuccessLight,
-        successContainer = successContainerLight,
-        onSuccessContainer = onSuccessContainerLight,
-        warning = warningLight,
-        onWarning = onWarningLight,
-        warningContainer = warningContainerLight,
-        onWarningContainer = onWarningContainerLight,
-        info = infoLight,
-        onInfo = onInfoLight,
-        infoContainer = infoContainerLight,
-        onInfoContainer = onInfoContainerLight,
-        link = linkLight,
-        linkHover = linkHoverLight,
-    )
-}
+fun cdSemanticColors(darkTheme: Boolean? = null): CdSemanticColors =
+    when (darkTheme) {
+        true -> CdSemanticColorsDark
+        false -> CdSemanticColorsLight
+        null -> LocalCdSemanticColors.current
+    }
 

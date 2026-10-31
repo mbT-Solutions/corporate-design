@@ -5,7 +5,7 @@ import androidx.compose.material3.Shapes
 
 // generated from tokens.json by generate.py
 // corner-none and corner-full (pill) are not Shapes slots:
-// use RoundedCornerShape(0) / RoundedCornerShape(50) directly
+// use RoundedCornerShape(0) / RoundedCornerShape(percent = 50) directly
 val CdShapes = Shapes(
     extraSmall = RoundedCornerShape(4),
     small = RoundedCornerShape(8),
